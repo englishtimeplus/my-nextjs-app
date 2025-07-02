@@ -6,8 +6,8 @@ pipeline {
         GIT_REPO = "https://github.com/englishtimeplus/my-nextjs-app.git"
         DOCKER_REGISTRY = 'mossei822' // 본인 Docker Hub ID
         DOCKER_IMAGE_NAME = 'my-nextjs-app'
-        DOCKER_CREDENTIALS_ID = 'dckr_pat_lMilEYYSVy_bOxKa2RyOiDCX8LA' // Jenkins에 등록한 Docker Hub 인증 정보 ID
-        GITHUB_CREDENTIALS_ID = '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' // GitHub Token 인증 정보 ID
+        DOCKER_CREDENTIALS_ID = 'dockerhub-credentials' // Jenkins에 등록한 Docker Hub 인증 정보 ID
+        GITHUB_CREDENTIALS_ID = 'github-credentials' // GitHub Token 인증 정보 ID
         // KUBE_CONFIG_CREDENTIALS_ID = 'kubeconfig-credentials' // Jenkins에 등록한 Kubeconfig 인증 정보 ID
     }
 
