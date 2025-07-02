@@ -10,6 +10,9 @@ pipeline {
         GITHUB_CREDENTIALS_ID = 'github-credentials' // GitHub Token 인증 정보 ID
         // KUBE_CONFIG_CREDENTIALS_ID = 'kubeconfig-credentials' // Jenkins에 등록한 Kubeconfig 인증 정보 ID
     }
+    tools {
+        docker 'default-docker' // Global Tool Configuration에 설정한 Docker 이름
+    }
 
     stages {
         stage('Checkout from GitHub') {
