@@ -11,7 +11,7 @@ pipeline {
         // KUBE_CONFIG_CREDENTIALS_ID = 'kubeconfig-credentials' // Jenkins에 등록한 Kubeconfig 인증 정보 ID
     }
     tools {
-        docker 'default-docker' // Global Tool Configuration에 설정한 Docker 이름
+       dockerTool 'default-docker' // Global Tool Configuration에 설정한 Docker 이름
     }
 
     stages {
