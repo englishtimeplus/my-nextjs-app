@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        GIT_REPO = "https://github.com/englishtimeplus/kuber-test"
-        DOCKER_IMAGE = "mossei822/nextjs-app"
+        GIT_REPO = "https://github.com/englishtimeplus/my-nextjs-app.git"
+        DOCKER_IMAGE = "mossei822/my-nextjs-app"
         IMAGE_TAG = "latest"
     }
 
