@@ -20,7 +20,7 @@ pipeline {
         stage('Checkout from GitHub') {
             steps {
                 git url: "${env.GIT_REPO}",
-                    branch: 'main',
+                    branch: 'master',
                     credentialsId: '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' // GitHub Token 기반 인증
             }
         }
