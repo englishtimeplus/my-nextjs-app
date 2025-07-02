@@ -1,0 +1,92 @@
+sudo apt update
+
+docker 설치
+
+nodejs 설치
+
+# Docker 서비스 시작 및 사용자 권한 추가
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo usermod -aG docker $USER 
+newgrp docker
+
+# 최신버전 확인
+curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.29.0/kind-linux-amd64
+chmod +x ./kind
+sudo mv ./kind /usr/local/bin/kind
+
+sudo apt update
+
+
+#minikube
+curl -LO https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64
+sudo install minikube-linux-amd64 /usr/local/bin/minikube && rm minikube-linux-amd64
+
+minikube addons enable metrics-server
+
+minikube start
+
+kubectl get po -A
+
+minikube kubectl -- get po -A
+
+alias kubectl="minikube kubectl --"
+
+
+sudo snap install kubectl --classic
+
+kubectl version --client
+
+npx create-next-app@latest my-nextjs-app
+cd my-nextjs-app
+
+nano Dockerfile
+
+nano next.config.ts
+
+
+# macOS / Linux
+eval $(minikube -p minikube docker-env)
+
+# Windows (PowerShell)
+# & minikube -p minikube docker-env | Invoke-Expression
+
+
+docker build -t my-nextjs-app:latest .
+
+
+mkdir k8s
+cd k8s
+
+nano deployment.yaml
+nano service.yaml
+
+kubectl apply -f deployment.yaml
+kubectl apply -f service.yaml
+
+kubectl get pods
+
+minikube service nextjs-service
+minikube service nextjs-service --url
+
+
+# 다중 만들기 replicas
+kubectl get deployments
+NAME                READY   UP-TO-DATE   AVAILABLE   AGE
+nextjs-deployment   2/2     2            2           45m
+
+kubectl scale deployments/nextjs-deployment --replicas=4
+
+#Load Balancing
+kubectl describe services/nextjs-service
+
+#helm 설치
+sudo snap install helm --classic
+
+#traefik
+helm repo add traefik https://traefik.github.io/charts
+helm repo update
+helm install traefik traefik/traefik
+
+#rolling update , version 1 > vesion 2 ?????
+kubectl set image deployments/nextjs-deployment kubernetes-bootcamp=docker.io/jocatalin/kubernetes-bootcamp:v2

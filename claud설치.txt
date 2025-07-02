@@ -1,0 +1,68 @@
+docker 설치
+node 설치
+nextjs 설치
+
+sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
+sudo chown $(id -u):$(id -g) ~/.kube/config
+
+# jenkins 설치
+sudo helm repo add jenkinsci https://charts.jenkins.io
+sudo helm repo update
+sudo helm install jenkins jenkinsci/jenkins -n jenkins -f jenkins-values.yaml --create-namespace
+
+helm search repo jenkins/jenkins
+
+# k3s 설치 (서버)
+curl -sfL https://get.k3s.io | sh -
+
+# k3s 설치 (에이전트 - 멀티 노드 환경시)
+curl -sfL https://get.k3s.io | K3S_URL=https://SERVER_IP:6443 K3S_TOKEN=TOKEN sh -
+
+# kubectl 설정
+sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
+sudo chown $USER:$USER ~/.kube/config
+
+# k3s 상태 확인
+kubectl get nodes
+
+-------------------------------
+# kind 설치 (Linux)
+curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.29.0/kind-linux-amd64
+chmod +x ./kind
+sudo mv ./kind /usr/local/bin/kind
+
+# kind 클러스터 생성 (Ingress용 포트 매핑 포함)
+cat <<EOF > kind-config.yaml
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+- role: control-plane
+  kubeadmConfigPatches:
+  - |
+    kind: InitConfiguration
+    nodeRegistration:
+      kubeletExtraArgs:
+        node-labels: "ingress-ready=true"
+  extraPortMappings:
+  - containerPort: 80
+    hostPort: 80
+    protocol: TCP
+  - containerPort: 443
+    hostPort: 443
+    protocol: TCP
+EOF
+
+sudo kind create cluster --config=kind-config.yaml --name nextjs-cluster
+
+
+
+helm repo remove jenkins
+
+helm repo add jenkins https://charts.jenkins.io
+
+sudo helm install jenkins jenkins/jenkins \
+  --namespace jenkins \
+  --create-namespace \
+  --set controller.serviceType=NodePort \
+  --set controller.nodePort=32000 \
+  --set controller.admin.password=admin123

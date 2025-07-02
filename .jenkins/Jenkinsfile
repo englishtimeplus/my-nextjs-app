@@ -1,0 +1,61 @@
+pipeline {
+    agent any
+
+    environment {
+        GIT_REPO = "https://github.com/englishtimeplus/kuber-test"
+        DOCKER_IMAGE = "mossei822/nextjs-app"
+        IMAGE_TAG = "latest"
+    }
+
+    stages {
+        stage('Checkout from GitHub') {
+            steps {
+                git url: "${env.GIT_REPO}",
+                    branch: 'main',
+                    credentialsId: 'github-token' // GitHub Token 기반 인증
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    dockerImage = docker.build("${DOCKER_IMAGE}:${IMAGE_TAG}")
+                }
+            }
+        }
+
+        stage('Login to DockerHub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-token', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh """
+                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                    """
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    dockerImage.push()
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    sh '''
+                    kubectl set image deployment/nextjs-deployment nextjs-container=${DOCKER_IMAGE}:${IMAGE_TAG} --namespace=your-namespace
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            sh 'docker logout'
+        }
+    }
+}

@@ -1,0 +1,45 @@
+curl -sfL https://get.k3s.io | sh -
+ 
+
+npx create-next-app@latest nextjs-app
+cd nextjs-app
+
+nano Dockerfile 
+
+docker build -t nextjs-app:latest .
+
+# For AMD64 / x86_64
+curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.29.0/kind-linux-amd64 
+chmod +x ./kind
+sudo mv ./kind /usr/local/bin/kind
+
+sudo kind create cluster --name dev-cluster
+
+kind get clusters
+
+sudo kind load docker-image nextjs-app:latest --name dev-cluster 
+
+### 삭제
+sudo  kind delete cluster --name dev-cluster
+
+mkdir k3s
+cd k3s
+
+nano deployment.yaml
+nano service.yaml
+
+kubectl apply -f deployment.yaml
+
+kubectl apply -f service.yaml
+
+# pod 로그 확인
+kubectl describe pod nextjs-deployment-5ffc59d84f-5llm8
+
+# 권한문제
+mkdir -p ~/.kube
+sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
+sudo chown $USER:$USER ~/.kube/config
+chmod 600 ~/.kube/config
+
+export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+sudo chmod 644 /etc/rancher/k3s/k3s.yaml

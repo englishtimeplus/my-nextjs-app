@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nextjs-deployment
+spec:
+  replicas: 2 # 2개의 Pod를 실행
+  selector:
+    matchLabels:
+      app: nextjs
+  template:
+    metadata:
+      labels:
+        app: nextjs
+    spec:
+      containers:
+        - name: nextjs-container
+          image: mossei822/nextjs-app:latest # 빌드할 Docker 이미지 이름 
+          ports:
+            - containerPort: 3000

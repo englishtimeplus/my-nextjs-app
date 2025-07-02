@@ -1,0 +1,24 @@
+
+Dockerfile 작성
+next.config.js에 output: 'standalone' 설정 추가 권장
+
+docker build -t nextjs-app:latest .
+
+curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.29.0/kind-linux-amd64
+chmod +x ./kind
+sudo mv ./kind /usr/local/bin/kind
+ 
+kind create cluster --name dev-cluster
+
+kind get clusters
+
+kind load docker-image nextjs-app --name dev-cluster
+kind load docker-image nextjs-app:latest --name dev-cluster
+
+ 
+docker login
+docker info | grep Username  
+docker build -t mossei822/nextjs-app:latest . 
+docker push mossei822/nextjs-app:latest 
+kubectl get service nextjs-service
+kubectl get nodes -o wide
